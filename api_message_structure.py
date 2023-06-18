@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, List
-
-SEPARATOR_TOKEN = "<|endoftext|>"
+import const
 
 
 @dataclass(frozen=True)
@@ -25,7 +24,7 @@ class Conversation:
         return self
 
     def render(self):
-        return f"\n{SEPARATOR_TOKEN}".join(
+        return f"\n{const.SEPARATOR_TOKEN}".join(
             [message.render() for message in self.messages]
         )
 
@@ -43,7 +42,7 @@ class Prompt:
     convo: Conversation
 
     def render(self):
-        return f"\n{SEPARATOR_TOKEN}".join(
+        return f"\n{const.SEPARATOR_TOKEN}".join(
             [self.header.render()]
             + [Message("System", "Current conversation:").render()]
             + [self.convo.render()],
