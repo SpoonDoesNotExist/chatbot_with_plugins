@@ -7,7 +7,7 @@ class LocalStorage(BaseStorage):
         self.users = {}
 
     def get_user(self, user_id) -> User:
-        return self.users.get(
+        return self.users.setdefault(
             user_id,
             User(
                 uid=user_id,
