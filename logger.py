@@ -10,7 +10,7 @@ class Logger:
     def _init_file_logger(self) -> None:
         # Configure the logger
         logging.basicConfig(
-            filename='log_file.log',
+            filename='data/log_file.log',
             level=logging.DEBUG,
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
