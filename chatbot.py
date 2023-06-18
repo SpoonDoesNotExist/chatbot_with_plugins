@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Optional, Union
 
 import openai as openai
 import requests
@@ -18,11 +19,11 @@ class ChatBot:
         self._logger: Logger = logger
         self.db = LocalStorage()
 
-    def generate(self, user_id: int, message: str):
+    async def generate(self, user_id: int, message: str) -> Optional[Union[BytesIO, None]]:
         user = self.db.get_user(user_id)
         user.add_user_message(message)
 
-        response = openai.Image.create(
+        response = await openai.Image.acreate(
             prompt=message,
             n=1,
             size="256x256"
@@ -30,7 +31,7 @@ class ChatBot:
         image_url = response['data'][0]['url']
         return self._download_image(image_url)
 
-    def _download_image(self, url):
+    def _download_image(self, url) -> Optional[Union[BytesIO, None]]:
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -40,20 +41,20 @@ class ChatBot:
             print('Error downloading image:', e)
             return None
 
-    def answer(self, user_id: int, message: str) -> str:
+    async def answer(self, user_id: int, message: str) -> str:
         self._logger.debug(f"User: {user_id} Message: {message}")
         user = self.db.get_user(user_id)
 
-        bot_answer = self._do_completion(user, message)
+        bot_answer = await self._do_completion(user, message)
         user.add_user_message(message)
         user.add_bot_message(self._bot_name, bot_answer)
         return bot_answer
 
-    def _do_completion(self, user: User, message: str) -> str:
+    async def _do_completion(self, user: User, message: str) -> str:
         prompt = self._get_prompt(user, message)
         print(f"Prompt: {prompt}")
 
-        completion = openai.Completion.create(
+        completion = await openai.Completion.acreate(
             engine=const.API_BOT_NAME,
             prompt=prompt,
             temperature=const.TEMPERATURE,
@@ -67,7 +68,7 @@ class ChatBot:
             answer = answer.split("->")[0].strip()
         return answer
 
-    def _get_prompt(self, user: User, message: str):
+    def _get_prompt(self, user: User, message: str) -> str:
         conv_tail = [
             Message('user', 'Ответь на следующий вопрос:'),
             Message('user', message),
