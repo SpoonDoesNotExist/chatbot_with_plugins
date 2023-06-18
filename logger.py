@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import List
 
 
@@ -9,8 +10,11 @@ class Logger:
 
     def _init_file_logger(self) -> None:
         # Configure the logger
+        filename = 'data/log_file.log'
+        if not os.path.exists(filename):
+            os.makedirs(filename)
         logging.basicConfig(
-            filename='data/log_file.log',
+            filename=filename,
             level=logging.DEBUG,
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
