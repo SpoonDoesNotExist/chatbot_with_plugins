@@ -4,7 +4,7 @@ import openai as openai
 import requests
 
 from api_message_structure import Prompt, Message, Conversation
-from const import BOT_NAME, BOT_INSTRUCTIONS, API_BOT_NAME
+import const
 from logger import Logger
 from storage.local_storage import LocalStorage
 from storage.objects.user import User
@@ -12,8 +12,8 @@ from storage.objects.user import User
 
 class ChatBot:
     def __init__(self, logger: Logger):
-        self._bot_name = BOT_NAME
-        self._instructions = BOT_INSTRUCTIONS
+        self._bot_name = const.BOT_NAME
+        self._instructions = const.BOT_INSTRUCTIONS
 
         self._logger: Logger = logger
         self.db = LocalStorage()
@@ -54,12 +54,12 @@ class ChatBot:
         print(f"Prompt: {prompt}")
 
         completion = openai.Completion.create(
-            engine=API_BOT_NAME,
+            engine=const.API_BOT_NAME,
             prompt=prompt,
-            temperature=0.92,
-            top_p=0.9,
-            max_tokens=512,
-            stop='<|endoftext|>',
+            temperature=const.TEMPERATURE,
+            top_p=const.TOP_P,
+            max_tokens=const.MAX_TOKENS,
+            stop=const.SEPARATOR_TOKEN,
         )
 
         answer = completion['choices'][0]['text'].strip()
@@ -74,7 +74,7 @@ class ChatBot:
             Message(self._bot_name),
         ]
         prompt = Prompt(
-            header=Message('System', BOT_INSTRUCTIONS),
+            header=Message('System', const.BOT_INSTRUCTIONS),
             convo=Conversation(
                 user.dialog + conv_tail
             )
