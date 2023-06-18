@@ -14,9 +14,5 @@ class User:
     def dialog(self):
         return self._dialog
 
-    @id.setter
-    def _id(self, value):
-        self._id = value
-
     def add_message(self, message: str):
         self._dialog.append(message)
