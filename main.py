@@ -26,6 +26,21 @@ def send_welcome(message):
     )
 
 
+@bot.message_handler(commands=['generate'])
+def generate(message):
+    text = message.text.replace('/generate', '').strip()
+    image_data = cb.generate(message.from_user.id, text)
+    if image_data is None:
+        bot.reply_to(
+            message,
+            'Не получилось сгенерировать изображение.',
+        )
+    bot.send_photo(
+        message.chat.id,
+        photo=image_data,
+    )
+
+
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     bot.reply_to(
